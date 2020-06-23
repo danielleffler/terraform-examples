@@ -66,43 +66,49 @@ resource "aws_iam_role_policy_attachment" "apps-node-AmazonEC2ContainerRegistryR
   role       = aws_iam_role.apps-node.name
 }
 
-resource "aws_iam_openid_connect_provider" "example" {
+data "external" "thumbprint" {
+  program = ["bash", "${path.module}/thumbprint.sh", data.aws_region.current.name]
+}
+
+resource "aws_iam_openid_connect_provider" "apps" {
   client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = []
+  thumbprint_list = [data.external.thumbprint.result.thumbprint]
   url             = "${aws_eks_cluster.apps.identity.0.oidc.0.issuer}"
+  depends_on = [aws_eks_cluster.apps]
 }
 
 data "aws_caller_identity" "current" {}
 
-data "aws_iam_policy_document" "example_assume_role_policy" {
+data "aws_iam_policy_document" "apps_assume_role_policy" {
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
     effect  = "Allow"
 
     condition {
-      test     = "StringEquals"
-      variable = "${replace(aws_iam_openid_connect_provider.example.url, "https://", "")}:sub"
+      test     = "StringLike"
+      variable = "${replace(aws_iam_openid_connect_provider.apps.url, "https://", "")}:sub"
       values   = ["system:serviceaccount:*"]
     }
 
     principals {
-      identifiers = ["${aws_iam_openid_connect_provider.example.arn}"]
+      identifiers = ["${aws_iam_openid_connect_provider.apps.arn}"]
       type        = "Federated"
     }
   }
+  depends_on = [aws_iam_openid_connect_provider.apps]
 }
 
-resource "aws_iam_role" "example" {
-  assume_role_policy = "${data.aws_iam_policy_document.example_assume_role_policy.json}"
-  name               = "example"
+resource "aws_iam_role" "apps" {
+  assume_role_policy = "${data.aws_iam_policy_document.apps_assume_role_policy.json}"
+  name               = "apps-cluster-pods-role"
 }
 
-resource "aws_iam_role_policy_attachment" "example-AmazonEKS_CNI_Policy" {
+resource "aws_iam_role_policy_attachment" "app-role-AmazonEKS_CNI_Policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  role       = aws_iam_role.example.name
+  role       = aws_iam_role.apps.name
 }
 
-resource "aws_iam_role_policy_attachment" "example-Secrets_Manager_Read_Write" {
+resource "aws_iam_role_policy_attachment" "app-role-Secrets_Manager_Read_Write" {
   policy_arn = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
-  role       = aws_iam_role.example.name
+  role       = aws_iam_role.apps.name
 }

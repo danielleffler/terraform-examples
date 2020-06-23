@@ -1,5 +1,5 @@
 REGION	?= us-west-2
-CLUSTER ?= terraform-eks-demo
+CLUSTER ?= apps-cluster
 
 kubeconfig:
 	aws eks --region $(REGION) update-kubeconfig --name $(CLUSTER)

@@ -33,11 +33,11 @@ resource "aws_internet_gateway" "demo" {
   vpc_id = aws_vpc.demo.id
 
   tags = {
-    Name = "terraform-eks-demo"
+    Name = var.cluster-name
   }
 }
 
-resource "aws_route_table" "demo" {
+resource "aws_route_table" "apps" {
   vpc_id = aws_vpc.demo.id
 
   route {
@@ -46,10 +46,10 @@ resource "aws_route_table" "demo" {
   }
 }
 
-resource "aws_route_table_association" "demo" {
+resource "aws_route_table_association" "apps" {
   count = 2
 
   subnet_id      = aws_subnet.apps.*.id[count.index]
-  route_table_id = aws_route_table.demo.id
+  route_table_id = aws_route_table.apps.id
 }
 
