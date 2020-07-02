@@ -98,17 +98,44 @@ data "aws_iam_policy_document" "apps_assume_role_policy" {
   depends_on = [aws_iam_openid_connect_provider.apps]
 }
 
-resource "aws_iam_role" "apps" {
+resource "aws_iam_role" "argocd" {
   assume_role_policy = "${data.aws_iam_policy_document.apps_assume_role_policy.json}"
-  name               = "apps-cluster-pods-role"
-}
-
-resource "aws_iam_role_policy_attachment" "app-role-AmazonEKS_CNI_Policy" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  role       = aws_iam_role.apps.name
+  name               = "argocd-role"
 }
 
 resource "aws_iam_role_policy_attachment" "app-role-Secrets_Manager_Read_Write" {
   policy_arn = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
-  role       = aws_iam_role.apps.name
+  role       = aws_iam_role.argocd.name
+}
+
+resource "aws_iam_role" "argo-workflows" {
+  assume_role_policy = "${data.aws_iam_policy_document.apps_assume_role_policy.json}"
+  name               = "argo-workflows-role"
+}
+
+resource "aws_iam_policy" "argo-workflows" {
+  name        = "argo-workflows-policy"
+  description = "Allow access to artifacts"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:GetBucketLocation"
+      ],
+      "Effect": "Allow",
+      "Resource":"${aws_s3_bucket.argo-workflow-artifacts.arn}/*"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "argo-workflows-attach" {
+  role       = "${aws_iam_role.argo-workflows.name}"
+  policy_arn = "${aws_iam_policy.argo-workflows.arn}"
 }

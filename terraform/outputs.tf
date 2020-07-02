@@ -57,3 +57,7 @@ output "config_map_aws_auth" {
 output "kubeconfig" {
   value = local.kubeconfig
 }
+
+output "thumbprint" {
+  value = data.external.thumbprint.result["thumbprint"]
+}
