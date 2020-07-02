@@ -8,7 +8,11 @@ metadata:
     app.kubernetes.io/part-of: argocd
 data:
   repositories: |
-    - url: git@github.com:danielleffler/argocd.git
+    - url: git@github.com:danielleffler/terraform-examples.git
+      sshPrivateKeySecret:
+        name: argocd-private-key
+        key: private_key
+    - url: git@github.com:danielleffler/node-app-manifests.git
       sshPrivateKeySecret:
         name: argocd-private-key
         key: private_key
