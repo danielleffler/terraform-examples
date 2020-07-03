@@ -128,7 +128,7 @@ resource "aws_iam_policy" "argo-workflows" {
         "s3:GetBucketLocation"
       ],
       "Effect": "Allow",
-      "Resource":"${aws_s3_bucket.argo-workflow-artifacts.arn}/*"
+      "Resource":"${aws_s3_bucket.argo-workflow-artifacts.arn}*"
     }
   ]
 }

@@ -26,7 +26,7 @@ data "kubernetes_service" "ingress_nginx" {
     namespace = "ingress-nginx"
   }
 
-  depends_on = [null_resource.wait_for_ingress_nginx]
+  depends_on = [null_resource.module_depends_on, null_resource.wait_for_ingress_nginx]
 }
 
 data "aws_lb" "ingress-nginx" {
