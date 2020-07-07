@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: node-app-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+    kubernetes.io/ingress.class: "nginx"
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: node-app-svc
+          servicePort: http
+    host: test.k8engine.com.au
+  tls:
+  - hosts:
+    - test.k8engine.com.au
+    secretName: test-app-secret
