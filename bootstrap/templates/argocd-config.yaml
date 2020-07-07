@@ -12,7 +12,3 @@ data:
       sshPrivateKeySecret:
         name: argocd-private-key
         key: private_key
-    - url: git@github.com:danielleffler/node-app-manifests.git
-      sshPrivateKeySecret:
-        name: argocd-private-key
-        key: private_key
