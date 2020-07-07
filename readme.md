@@ -19,3 +19,6 @@ $ terraform apply
 $ ./reset-argocd-password.sh
 ```
  - login at argocd.{your_domain}
+
+Todos
+Add CI with Argo Workflows and Events
