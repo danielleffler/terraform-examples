@@ -16,7 +16,7 @@ resource "aws_vpc" "demo" {
 }
 
 resource "aws_subnet" "apps" {
-  count = 2
+  count = "${var.node-count}"
 
   availability_zone = data.aws_availability_zones.available.names[count.index]
   cidr_block        = "10.0.${count.index}.0/24"
@@ -47,7 +47,7 @@ resource "aws_route_table" "apps" {
 }
 
 resource "aws_route_table_association" "apps" {
-  count = 2
+  count = "${var.node-count}"
 
   subnet_id      = aws_subnet.apps.*.id[count.index]
   route_table_id = aws_route_table.apps.id

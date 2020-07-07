@@ -58,10 +58,6 @@ output "kubeconfig" {
   value = local.kubeconfig
 }
 
-output "thumbprint" {
-  value = data.external.thumbprint.result["thumbprint"]
-}
-
 output "dns" {
-  value = aws_route53_zone.devops-australia-com.name_servers
+  value = aws_route53_zone.tld.name_servers
 }

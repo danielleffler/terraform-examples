@@ -11,6 +11,7 @@ resource "null_resource" "argocd_install" {
   provisioner "local-exec" {
     command = <<EOT
     kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+    kubectl wait --for=condition=available deployment -l "app.kubernetes.io/name=argocd-server" -n argocd --timeout=300s
     EOT
   }
   depends_on = [null_resource.argocd_namespace, null_resource.wait_for_kes_crd]
@@ -31,5 +32,5 @@ resource "null_resource" "patch_argocd_install" {
     kubectl patch deployment argocd-server --type json -p='[ { "op": "replace", "path":"/spec/template/spec/containers/0/command","value": ["argocd-server","--staticassets","/shared/app","--insecure"] }]' -n argocd
     EOT
   }
-  depends_on = [null_resource.argocd_namespace, null_resource.wait_for_argocd]
+  depends_on = [null_resource.wait_for_argocd]
 }

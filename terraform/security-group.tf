@@ -15,7 +15,7 @@ resource "aws_security_group" "apps-cluster" {
   }
 
   tags = {
-    Name = "terraform-eks-demo"
+    Name = "terraform-eks-apps"
   }
 }
 

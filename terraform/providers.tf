@@ -23,4 +23,14 @@ provider "http" {}
 
 provider "external" {}
 
-provider "kubernetes" {}
+provider "kubernetes" {
+  host                   = "${aws_eks_cluster.apps.endpoint}"
+  cluster_ca_certificate = "${base64decode(aws_eks_cluster.apps.certificate_authority.0.data)}"
+  token                  = "${data.aws_eks_cluster_auth.apps.token}"
+  load_config_file       = false
+}
+
+data "aws_eks_cluster_auth" "apps" {
+  name = aws_eks_cluster.apps.name
+  depends_on = [aws_eks_cluster.apps]
+}

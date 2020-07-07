@@ -7,6 +7,6 @@ data:
     config: |
       artifactRepository:
         s3:
-          bucket: codezen-argo-workflow-artifacts
+          bucket: {{ .Values.argo_artifacts_bucket }}
           endpoint: s3.amazonaws.com
           useSDKCreds: true

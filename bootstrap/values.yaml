@@ -1,2 +1,4 @@
-domain: devops-australia.com
+domain: k8engine.com.au
 email: support@codezen.com.au
+argo_artifacts_bucket: codezen-argo-workflow-artifacts
+repo: git@github.com:danielleffler/terraform-examples.git
