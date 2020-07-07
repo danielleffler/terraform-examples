@@ -10,11 +10,11 @@ resource "null_resource" "argocd_namespace" {
 resource "null_resource" "argocd_install" {
   provisioner "local-exec" {
     command = <<EOT
+    kubectl create ns argocd || true
     kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-    kubectl wait --for=condition=available deployment -l "app.kubernetes.io/name=argocd-server" -n argocd --timeout=300s
     EOT
   }
-  depends_on = [null_resource.argocd_namespace, null_resource.wait_for_kes_crd]
+ depends_on = [null_resource.module_depends_on, null_resource.wait_for_kes_crd]
 }
 
 resource "null_resource" "wait_for_argocd" {

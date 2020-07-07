@@ -9,5 +9,5 @@ resource "null_resource" "argo_install" {
     EOT
   }
   //
-  depends_on = [null_resource.wait_for_kes_crd]
+  depends_on = [null_resource.module_depends_on, null_resource.wait_for_kes_crd]
 }
