@@ -1,7 +1,7 @@
 resource "null_resource" "bootstrap" {
   provisioner "local-exec" {
     command = <<EOT
-    helm template ${path.module}/../../../bootstrap --generate-name | kubectl apply -f -
+    helm template ${path.module}/../../../argocd --generate-name | kubectl apply -f -
     EOT
   }
 
